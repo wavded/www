@@ -1,5 +1,5 @@
 ---
-title: Writing modular Node projects for Express and beyond.
+title: Writing modular Node projects for Express and beyond
 date: "2014-10-21T16:49:04-06:00"
 strongloopURL: https://strongloop.com/strongblog/modular-node-js-express/
 tags: ["express", "nodejs"]

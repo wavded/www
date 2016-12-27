@@ -7,6 +7,7 @@ disableHugoGeneratorInject: True
 pygmentsCodeFences: True
 pygmentsStyle: manni
 footnoteReturnLinkContents: "↩"
+metaDataFormat: "yaml"
 
 params:
   githubURL: https://github.com/wavded/www
