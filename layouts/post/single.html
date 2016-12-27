@@ -22,7 +22,7 @@
     {{ with .Params.commentURL }}
       <a href="{{ . }}">Discuss this post.</a>
     {{ end }}
-    <a href="https://github.com/wavded/site/blob/master/content/{{ .File.Path }}">Submit a change/correction.</a>
+    <a href="{{ .Site.Params.githubURL }}/blob/master/content/{{ .File.Path }}">Submit a change/correction.</a>
   </p>
 
   <p>
