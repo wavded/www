@@ -3,12 +3,12 @@ commentURL: ""
 date: 2013-11-14T14:33:02-06:00
 strongloopURL: http://strongloop.com/strongblog/real-time-engines-in-node-js
 tags: ["nodejs", "websocket"]
-title: Real-time Engines in Node
+title: Real-time engines in Node
 ---
 
-Node arrived on the scene around the time the WebSocket protocol was drafted. Node’s fast, evented approach to server-side programming was a perfect pairing for WebSocket. Out of that marriage emerged the popular [socket.io framework](http://socket.io/): an instant favorite used heavily in the first [Node Knockout](http://nodeknockout.com/) competition.
+Node arrived on the scene around the time the WebSocket protocol was drafted. Node's fast, evented approach to server-side programming was a perfect pairing for WebSocket. Out of that marriage emerged the popular [socket.io framework](http://socket.io/): an instant favorite used heavily in the first [Node Knockout](http://nodeknockout.com/) competition.
 
-Now that WebSocket is [mature](http://tools.ietf.org/html/rfc6455) and has support in [all the modern desktop browsers](http://caniuse.com/#search=websocket) and most mobile platforms, the dust has settled a bit. Let’s take a look at what’s available in Node for WebSocket.
+Now that WebSocket is [mature](http://tools.ietf.org/html/rfc6455) and has support in [all the modern desktop browsers](http://caniuse.com/#search=websocket) and most mobile platforms, the dust has settled a bit. Let's take a look at what's available in Node for WebSocket.
 
 ## The WebSocket module ecosystem
 
@@ -42,7 +42,7 @@ The [websocket](https://github.com/faye/websocket-driver-node) module is another
 
 ## The WebSocket Emulation modules
 
-Unfortunately, WebSocket does not work [everywhere](https://github.com/sockjs/sockjs-client#supported-transports-by-browser-html-served-from-http-or-https). Even browsers supporting WebSocket run into issues if the network isn’t conducive to WebSocket. Here is where emulation modules come into play. They employ different strategies to ensure the browser gets the best possible real-time transport available (which ultimately is WebSocket).
+Unfortunately, WebSocket does not work [everywhere](https://github.com/sockjs/sockjs-client#supported-transports-by-browser-html-served-from-http-or-https). Even browsers supporting WebSocket run into issues if the network isn't conducive to WebSocket. Here is where emulation modules come into play. They employ different strategies to ensure the browser gets the best possible real-time transport available (which ultimately is WebSocket).
 
 Here are some popular emulation modules:
 
@@ -62,7 +62,7 @@ Since numerous modules fall under this category, we will only cover a few here:
 
 ### Module: socket.io
 
-The [socket.io](https://github.com/learnboost/socket.io/tree/0.9) module is the original wildly popular real-time engine. It includes features such as broadcasting, rooms, namespaces, and custom event emitters. It is “still” in development, but version 1.0 integrates with engine.io (the latest stable 0.9.x does not).
+The [socket.io](https://github.com/learnboost/socket.io/tree/0.9) module is the original wildly popular real-time engine. It includes features such as broadcasting, rooms, namespaces, and custom event emitters. It is "still" in development, but version 1.0 integrates with engine.io (the latest stable 0.9.x does not).
 
 ### Modules: websocket-multiplex and shoe
 
@@ -74,10 +74,10 @@ The [primus](https://github.com/primus/primus) module wraps around several real-
 
 ## A fireside chat about real-time engines
 
-Here’s a little advice from one who has “walked through the fire” of debugging real-time engines:
+Here's a little advice from one who has "walked through the fire" of debugging real-time engines:
 
-1.  Use only what you need and nothing more. In my experience, staying at the emulation layer with a library like sockjs or engine.io and building only what I need has proven easier to debug. I haven’t used primus personally, but I like the modular approach there. However, something feature-rich like socket.io enables faster prototyping of ideas.
-2.  The downgrade approach is slightly faster to set up, but [has problems on some networks](https://github.com/sockjs/sockjs-client/issues/94?source=cc); upgrade approach is slightly slower, but more reliable. Both approaches have their merits. I’m curious as to how that is playing out for others.
+1.  Use only what you need and nothing more. In my experience, staying at the emulation layer with a library like sockjs or engine.io and building only what I need has proven easier to debug. I haven't used primus personally, but I like the modular approach there. However, something feature-rich like socket.io enables faster prototyping of ideas.
+2.  The downgrade approach is slightly faster to set up, but [has problems on some networks](https://github.com/sockjs/sockjs-client/issues/94?source=cc); upgrade approach is slightly slower, but more reliable. Both approaches have their merits. I'm curious as to how that is playing out for others.
 3.  WebSocket running on port 80 can be the most troublesome for corporate firewalls as everybody likes to have their hands on that port! Try switching to 443 (SSL) or any other port to fix problems upgrading the protocol.
 
 ## Keeping it real-time

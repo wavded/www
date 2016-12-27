@@ -46,6 +46,13 @@ figure img {
   max-width: 100%;
 }
 
+button {
+  border: 1px solid #aaa;
+  border-radius: 2px;
+  padding: 2px;
+  background-color: transparent;
+}
+
 nav ul {
   margin: 0;
 }
