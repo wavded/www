@@ -1,0 +1,10 @@
+{{ partial "header" }}
+<section id="main">
+  <h1>Articles tagged "{{ .Title | lower }}"</h1>
+  <ul>
+    {{ range .Data.Pages }}
+      <li><a href="{{ .Permalink }}">{{ .Title }}</a></li>
+    {{ end }}
+  </ul>
+</section>
+{{ partial "footer" }}

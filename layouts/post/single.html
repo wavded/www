@@ -1,0 +1,37 @@
+{{ partial "header" . }}
+<section>
+  <aside class="meta">
+    <b>{{ .Lastmod.Format "2 Jan 2006" }}</b>
+    ({{ .FuzzyWordCount }} Words/{{ .ReadingTime }} Minutes)
+    {{ range .Params.tags }}
+      <button><a href="/tags/{{ . | urlize }}">{{ . | upper }}</a></button>
+    {{ end }}
+  </aside>
+
+  <article>
+  <h1>{{ .Title }}</h1>
+{{ .Content }}
+  </article>
+
+  <hr class="finale"/>
+{{ with .Params.strongloopURL }}
+  <p><i>This article originally was published on the <a href="{{ . }}">Strongloop blog</a>.</i></p>
+{{ end }}
+  <p>
+    <b>What do you think?</b>
+    {{ with .Params.commentURL }}
+      <a href="{{ . }}">Discuss this post.</a>
+    {{ end }}
+    <a href="https://github.com/wavded/site/blob/master/content/{{ .File.Path }}">Submit a change/correction.</a>
+  </p>
+
+  <p>
+    Up next:
+      {{ if .Next }}
+        <b><a class="next" href="{{.Next.Permalink}}"> {{.Next.Title}}</a></b>
+      {{ end }}
+  </p>
+
+  {{ partial "shortbio" . }}
+</section>
+{{ partial "footer" . }}
