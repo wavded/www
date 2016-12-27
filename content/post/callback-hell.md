@@ -3,7 +3,7 @@ commentURL: ""
 date: 2014-03-03T15:00:53-06:00
 strongloopURL: "https://strongloop.com/strongblog/node-js-callback-hell-promises-generators/"
 tags: ["nodejs","generators","promises","callbacks","javascript"]
-title: "Managing Node.js callback hell with promises, generators, and other approaches"
+title: "Managing callback hell with promises, generators, and other approaches"
 ---
 
 We know it most endearingly as "callback hell" or the "pyramid of doom":
