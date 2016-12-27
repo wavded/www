@@ -1,7 +1,7 @@
 ---
 date: 2010-10-26T15:00:53-06:00
 tags: ["javascript","perl"]
-title: "Influenced by Perl"
+title: "Influenced by Perl: JavaScript function storage"
 
 ---
 
