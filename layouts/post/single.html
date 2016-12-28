@@ -1,5 +1,9 @@
 {{ partial "header" . }}
 <section>
+  {{ with .Draft }}
+  <b class="text-error">Draft</b>
+  {{ end }}
+
   <aside class="meta">
     <b>{{ .Lastmod.Format "2 Jan 2006" }}</b>
     ({{ .FuzzyWordCount }} Words/{{ .ReadingTime }} Minutes)

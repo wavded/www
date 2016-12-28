@@ -3,7 +3,9 @@
   <h1>Articles tagged "{{ .Title | lower }}"</h1>
   <ul>
     {{ range .Data.Pages }}
+      {{ if not .Draft }}
       <li><a href="{{ .Permalink }}">{{ .Title }}</a></li>
+      {{ end }}
     {{ end }}
   </ul>
 </section>

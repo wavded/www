@@ -79,27 +79,6 @@ nav ul li a {
   color: #333;
 }
 
-.container {
-  position: relative;
-  text-align: left;
-  width: 960px;
-  max-width: 90%;
-  margin: 20px auto 0;
-}
-
-.footnotes {
-  font-size: 18px;
-}
-
-.footnotes code {
-  font-size: 14px;
-}
-
-.meta {
-  font-size: 14px;
-  margin-bottom: 10px;
-}
-
 footer {
   font-size: 16px;
   line-height: 26px;
@@ -119,6 +98,29 @@ footer ul li {
   display: inline;
   list-style: none;
   padding-left: 20px;
+}
+
+/* Classes */
+
+.container {
+  position: relative;
+  text-align: left;
+  width: 960px;
+  max-width: 90%;
+  margin: 20px auto 0;
+}
+
+.footnotes {
+  font-size: 18px;
+}
+
+.footnotes code {
+  font-size: 14px;
+}
+
+.meta {
+  font-size: 14px;
+  margin-bottom: 10px;
 }
 
 .shortbio {
@@ -353,6 +355,10 @@ img.center {
 
 .text-justify {
   text-align: justify;
+}
+
+.text-error {
+  color: #c03;
 }
 
 /* Misc */

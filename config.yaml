@@ -3,6 +3,7 @@ title: Andrew.
 copyright: ©2010-2016 Marc Andrew Harter
 
 baseURL: http://wavded.com
+buildDrafts: True
 disableHugoGeneratorInject: True
 pygmentsCodeFences: True
 pygmentsStyle: manni
