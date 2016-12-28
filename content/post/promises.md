@@ -1,6 +1,6 @@
 ---
 commentURL: ""
-date: 2016-08-24T15:00:53-06:00
+date: 2013-08-13T15:00:53-06:00
 strongloopURL: "https://strongloop.com/strongblog/promises-in-node-js-an-alternative-to-callbacks/"
 tags: ["nodejs","promises","javascript"]
 title: "Promises in Node: An alternative to callbacks"

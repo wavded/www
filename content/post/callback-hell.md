@@ -198,7 +198,7 @@ The async module guarantees only one callback will be fired. It also propagates 
 
 ## A promises approach
 
-[Promises](http://www.html5rocks.com/en/tutorials/es6/promises/) provide error handling and [functional programming perks](http://strongloop.com/strongblog/how-to-compose-node-js-promises-with-q/). How would we approach this problem using promises? For that, let’s utilize the [Q](https://github.com/kriskowal/q) module (although other promise libraries could be employed):
+[Promises](http://www.html5rocks.com/en/tutorials/es6/promises/) provide error handling and [functional programming perks]({{< ref "post/promises-2.md" >}}). How would we approach this problem using promises? For that, let’s utilize the [Q](https://github.com/kriskowal/q) module (although other promise libraries could be employed):
 
 ```js
 var fs = require('fs')
@@ -247,7 +247,7 @@ findLargest('./path/to/dir')
 
 > Although designed this way above, you don’t have to expose a promise interface. Many promise libraries have a way to expose a nodeback style as well. With Q, we could do this using the [nodeify](https://github.com/kriskowal/q/wiki/API-Reference#wiki-promisenodeifycallback) function.
 
-The scope of promises is not developed here. I would recommend reading more about them [here](http://strongloop.com/strongblog/promises-in-node-js-with-q-an-alternative-to-callbacks/).
+The scope of promises is not developed here. I would recommend reading more about them [here]({{< ref "promises.md" >}}).
 
 ## A generators approach
 
