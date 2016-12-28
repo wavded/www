@@ -53,6 +53,16 @@ button {
   background-color: transparent;
 }
 
+br.brk {
+  display: block;
+}
+
+@media screen and (min-width: 600px) {
+  br.brk {
+    display: none;
+  }
+}
+
 nav ul {
   margin: 0;
 }

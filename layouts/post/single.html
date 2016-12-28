@@ -3,6 +3,7 @@
   <aside class="meta">
     <b>{{ .Lastmod.Format "2 Jan 2006" }}</b>
     ({{ .FuzzyWordCount }} Words/{{ .ReadingTime }} Minutes)
+    <br class="brk" />
     {{ range .Params.tags }}
       <button><a href="/tags/{{ . | urlize }}">{{ . | upper }}</a></button>
     {{ end }}
