@@ -5,7 +5,7 @@
     ({{ .FuzzyWordCount }} Words/{{ .ReadingTime }} Minutes)
     <br class="brk" />
     {{ range .Params.tags }}
-      <button><a href="/tags/{{ . | urlize }}">{{ . | upper }}</a></button>
+      <button><a href="/tags/{{ . | urlize }}/">{{ . | upper }}</a></button>
     {{ end }}
   </aside>
 
