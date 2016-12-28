@@ -1,14 +1,16 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>{{ .Site.Title }}</title>
-  <link href="{{ .RSSLink }}" rel="alternate" type="application/rss+xml" title="{{ .Site.Title }}" />
-</head>
-<body>
+{{ partial "header" . }}
+<section>
+  <h1>Page not found.</h1>
 
-<section id="main">
   <div>
-    Not found
+    <h2>Posts:</h2>
+    <ul>
+    {{ range .Data.Pages }}
+    {{ if not .Draft }}
+    <li><small>{{ .Lastmod.Format "01/02/2006"}}:</small> <a href={{ .Permalink }}>{{ .Title }}</a></li>
+    {{ end }}
+    {{ end }}
+    </ul>
   </div>
 </section>
+{{ partial "footer" . }}
