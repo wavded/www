@@ -1,0 +1,14 @@
+{{ partial "header" . }}
+<section>
+  <div>
+    <h2>Drafts:</h2>
+    <ul>
+    {{ range .Site.Pages }}
+    {{ if and .Draft (eq .Type "post") }}
+    <a href={{ .Permalink }}>{{ .Title }}</a><br/>
+    {{ end }}
+    {{ end }}
+    </ul>
+  </div>
+</section>
+{{ partial "footer" . }}

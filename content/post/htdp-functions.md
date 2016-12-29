@@ -3,7 +3,7 @@ commentURL: ""
 date: 2016-12-15T15:00:53-06:00
 strongloopURL: "https://strongloop.com/strongblog/systematic-function-design-in-javascript/"
 tags: ["design","javascript","nodejs"]
-title: "Systematic Function Design in JavaScript"
+title: "Systematic function design in JavaScript"
 draft: True
 ---
 
