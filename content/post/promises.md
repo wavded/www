@@ -6,7 +6,7 @@ tags: ["nodejs","promises","javascript"]
 title: "Promises in Node: An alternative to callbacks"
 ---
 
-Promises are a compelling alternative to callbacks when dealing with asynchronous code. Unfortunately, promises can be confusing and perhaps you’ve written them off. However, significant work has been done to bring out the essential beauty of promises in a way that is interoperable and verifiable. The result is [Promises/A+](http://promises-aplus.github.io/promises-spec/), a specification that has made its way into ES6 JavaScript as well as multiple third-party libraries.
+Promises are a compelling alternative to callbacks when dealing with asynchronous code. Unfortunately, promises can be confusing and perhaps you've written them off. However, significant work has been done to bring out the essential beauty of promises in a way that is interoperable and verifiable. The result is [Promises/A+](http://promises-aplus.github.io/promises-spec/), a specification that has made its way into ES6 JavaScript as well as multiple third-party libraries.
 
 So what are promises and what do they offer Node developers?
 
@@ -14,9 +14,9 @@ So what are promises and what do they offer Node developers?
 
 First we’ll talk about the **behavior** of promises: What are they and how can they be useful? Then we’ll discuss how to create and use promises.
 
-So what is a promise? Let’s look at a definition:
+So what is a promise? Let's look at a definition:
 
-> A promise is an abstraction for asynchronous programming. It’s an object that proxies for the return value or the exception thrown by a function that has to do some asynchronous processing. — [Kris Kowal on JSJ](http://javascriptjabber.com/037-jsj-promises-with-domenic-denicola-and-kris-kowal/)
+> A promise is an abstraction for asynchronous programming. It's an object that proxies for the return value or the exception thrown by a function that has to do some asynchronous processing. — [Kris Kowal on JSJ](http://javascriptjabber.com/037-jsj-promises-with-domenic-denicola-and-kris-kowal/)
 
 Callbacks are the simplest possible mechanism for asynchronous code in JavaScript. Unfortunately, raw callbacks sacrifice the control flow, exception handling, and function semantics familiar from synchronous code. Promises provide a way to get those things back.
 
@@ -31,7 +31,7 @@ promise.then(onFulfilled, onRejected)
 
 ## Callbacks to promises
 
-Given this basic knowledge of promises, let’s take a look at a familiar asynchronous Node callback:
+Given this basic knowledge of promises, let's take a look at a familiar asynchronous Node callback:
 
 ```js
 readFile(function (err, data) {
@@ -47,9 +47,9 @@ var promise = readFile()
 promise.then(console.log, consoler.error)
 ```
 
-At first glance, it looks like just the aesthetics changed. However, we now have access to a *value* representing the asynchronous operation (the promise). We can pass the promise around and anyone with access to the promise can consume it using `then` *regardless if the asynchronous operation has completed or not*. We also have guarantees that the result of the asynchronous operation won’t change somehow, as the promise will only be resolved once (either fulfilled or rejected).
+At first glance, it looks like just the aesthetics changed. However, we now have access to a *value* representing the asynchronous operation (the promise). We can pass the promise around and anyone with access to the promise can consume it using `then` *regardless if the asynchronous operation has completed or not*. We also have guarantees that the result of the asynchronous operation won't change somehow, as the promise will only be resolved once (either fulfilled or rejected).
 
-> It’s helpful to think of `then` not just as a function that takes two callbacks (`onFulfilled`  and `onRejected`), but as a function that *unwraps* the promise to reveal what happened from the asynchronous operation. Anyone with access to the promise can use `then` to unwrap it. For more about this idea, read [Callbacks are imperative, promises are functional: Node’s biggest missed opportunity](http://blog.jcoglan.com/2013/03/30/callbacks-are-imperative-promises-are-functional-nodes-biggest-missed-opportunity/).
+> It's helpful to think of `then` not just as a function that takes two callbacks (`onFulfilled`  and `onRejected`), but as a function that *unwraps* the promise to reveal what happened from the asynchronous operation. Anyone with access to the promise can use `then` to unwrap it. For more about this idea, read [Callbacks are imperative, promises are functional: Node's biggest missed opportunity](http://blog.jcoglan.com/2013/03/30/callbacks-are-imperative-promises-are-functional-nodes-biggest-missed-opportunity/).
 
 ## Chaining and nesting promises
 
@@ -154,7 +154,7 @@ doThisAsync()
 
 ## An important note with error handling
 
-As stated earlier, promises mimic `try/catch` semantics. In a `try/catch` block, it’s possible to mask an error by never explicitly handling it:
+As stated earlier, promises mimic `try/catch` semantics. In a `try/catch` block, it's possible to mask an error by never explicitly handling it:
 
 ```js
 try {
@@ -181,17 +181,17 @@ readFile()
   .catch(console.error)
 ```
 
-Third-party libraries include options for exposing un-handled rejections.
+Third-party libraries include options for exposing unhandled rejections.
 
 # Promises in the concrete
 
-So far, our examples have used promise-returning dummy methods to illustrate the `then` method from ES6 and [Promises/A+](http://promisesaplus.com/). Let’s turn now and look at more concrete examples.
+So far, our examples have used promise-returning dummy methods to illustrate the `then` method from ES6 and [Promises/A+](http://promisesaplus.com/). Let's turn now and look at more concrete examples.
 
 ## Converting callbacks to promises
 
-You may be wondering how a promise is generated in the first place. The API for creating a promise isn’t specified in Promise/A+ because it’s not necessary for interoperability. However, ES6 did standardize a Promise constructor which we will come back to.  One of the most common cases for use promises is converting existing callback-based libraries.  Here, promise libraries like [Bluebird](http://bluebirdjs.com/) can provide convenient helpers.
+You may be wondering how a promise is generated in the first place. The API for creating a promise isn't specified in Promise/A+ because it's not necessary for interoperability. However, ES6 did standardize a Promise constructor which we will come back to.  One of the most common cases for use promises is converting existing callback-based libraries.  Here, promise libraries like [Bluebird](http://bluebirdjs.com/) can provide convenient helpers.
 
-For example, Node’s core asynchronous functions do not return promises; they take callbacks. However, we can easily make them return promises using Bluebird:
+For example, Node's core asynchronous functions do not return promises; they take callbacks. However, we can easily make them return promises using Bluebird:
 
 ```js
 var fs = Bluebird.promisifyAll(fs)
@@ -203,7 +203,7 @@ Bluebird provides a number of helper functions for adapting Node and other envir
 
 ## Creating raw promises
 
-You can manually create a promise using the Promise constructor. Let’s say we wanted to manually wrap `fs.readFile` to be promise-aware:
+You can manually create a promise using the Promise constructor. Let's say we wanted to manually wrap `fs.readFile` to be promise-aware:
 
 ```js
 function readFileAsync (file, encoding) {
@@ -219,7 +219,7 @@ readFileAsync('myfile.txt').then(console.log, console.error)
 
 ## Making APIs that support both callbacks and promises
 
-We have seen two ways to turn callback code into promise code. You can also make APIs that provide both a promise and callback interface. For example, let’s turn `fs.readFile` into an API that supports both callbacks and promises:
+We have seen two ways to turn callback code into promise code. You can also make APIs that provide both a promise and callback interface. For example, let's turn `fs.readFile` into an API that supports both callbacks and promises:
 
 ```js
 function readFileAsync (file, encoding, cb) {
@@ -243,14 +243,14 @@ readFileAsync('myfile.txt', 'utf8', function (er, data) {
 
 ## Doing parallel operations with promises
 
-So far, we’ve only talked about sequential asynchronous operations. For parallel operations, ES6 provides the `Promise.all` method which takes in an array of promises and returns a new promise. The new promise is fulfilled after *all* the operations have completed successfully. If *any* of the operations fail, the new promise is rejected.
+So far, we've only talked about sequential asynchronous operations. For parallel operations, ES6 provides the `Promise.all` method which takes in an array of promises and returns a new promise. The new promise is fulfilled after *all* the operations have completed successfully. If *any* of the operations fail, the new promise is rejected.
 
 ```js
 var allPromise = Promise.all([ fs_readFile('file1.txt'), fs_readFile('file2.txt') ])
 allPromise.then(console.log, console.error)
 ```
 
-> It’s important to note again that promises mimic functions. A function only has one return value. When passing `Promise.all` two promises that complete successfully, `onFulfilled` will be called with only one argument (an array with both results). This may surprise you; however, consistency with synchronous counterparts is an important guarantee that promises provide.
+> It's important to note again that promises mimic functions. A function only has one return value. When passing `Promise.all` two promises that complete successfully, `onFulfilled` will be called with only one argument (an array with both results). This may surprise you; however, consistency with synchronous counterparts is an important guarantee that promises provide.
 
 ## Making promises even more concrete
 

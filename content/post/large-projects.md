@@ -6,7 +6,7 @@ tags: ["express", "nodejs"]
 
 ---
 
-I have worked with Express for over four years now and I cannot count how many different ways I have reorganized my code!  Express bills itself as an *un*-opinionated framework.  This is true.  If you search for "express boilerplate" you will find a **lot** of different ways to organize your project.
+I have worked with Express for over four years now and I cannot count how many different ways I have reorganized my code!  Express bills itself as an unopinionated framework.  This is true.  If you search for "express boilerplate" you will find a **lot** of different ways to organize your project.
 
 In my experience, there isn't "one best way" to structure a project.  If you are looking for that, you probably won't find it. That's not to say there aren't things that work better than others.
 
@@ -26,7 +26,7 @@ A modular structure understands that you *won't* have complete isolation between
 The Node mantra of small npm modules is carried over then into small components.
 
 ## The minimal modular structure
-Here is a base structure that is as minimal and un-opinionated as I could make it:
+Here is a base structure that is as minimal and unopinionated as I could make it:
 
 ```sh
 .
@@ -38,7 +38,7 @@ Here is a base structure that is as minimal and un-opinionated as I could make i
 	
 Let's break down the intent of each item:
 
-1. *bin*: anything that doesn't fit nicely inside of an npm script (e.g. hooks, ci, etc)
+1. *bin*: anything that doesn't fit nicely inside of an npm script (e.g. hooks, CI, etc.)
 2. *lib*: the components of the application
 3.  *package.json*: project-wide dependencies and npm scripts
 4. *index.js*: initializes the application
@@ -172,4 +172,4 @@ If you are itching to see a full running example, I have [an Express project up 
 [^1]: However, *when* it makes sense, breaking components into their own published packages has the added benefit of reusing code between projects.
 [^2]: When working with ODM/ORM tools like Mongoose or Sequelize, I find having one *models* directory works nice.
 [^3]: Another technique for making components first class is setting the NODE_PATH environment variable to be the path of the *lib* directory.  I find using symlinks preferable through as you never have to set the path when executing any file or starting your app and it allows you to have a component and an npm package with the same name.  For example, I can have a customized `_/redis` module which depends on the `redis` npm package.
-[^4]: Setting up other scripts is trivial.  For updating, just change `npm.commands.install` to `npm.commands.update`.  Want to check if anything is outdated, just switch it to `npm.commands.outdated`.  See [npm api](https://www.npmjs.org/doc/api/npm.html) for more details.
+[^4]: Setting up other scripts is trivial.  For updating, just change `npm.commands.install` to `npm.commands.update`.  Want to check if anything is outdated, just switch it to `npm.commands.outdated`.  See [npm API](https://www.npmjs.org/doc/api/npm.html) for more details.

@@ -10,7 +10,7 @@ title: "Error handling in Express with promises, generators, and async/await"
 
 This article focuses on effective ways to capture and handle errors using [error-handling middleware](https://github.com/tc39/ecmascript-asyncawait) in Express[^1]. The article also includes a sample repository of these concepts on [GitHub](https://github.com/strongloop-community/express-example-error-handling).
 
-First, let’s look at what Express handles out of the box and then we will look at using promises, promise generators and `async/await` to simplify things further.
+First, let's look at what Express handles out of the box and then we will look at using promises, promise generators and `async/await` to simplify things further.
 
 ## Express has built-in synchronous handling
 
@@ -25,7 +25,7 @@ app.use(function (err, req, res, next) {
 })
 ```
 
-Yet in asynchronous code, Express cannot catch exceptions as you’ve lost your stack once you have entered a callback:
+Yet in asynchronous code, Express cannot catch exceptions as you've lost your stack once you have entered a callback:
 
 ```js
 app.get('/', function (req, res) {
@@ -47,7 +47,7 @@ app.get('/', function (req, res, next) {
     // handle data
     makeCsv(data, function (err, csv) {
       if (err) return next(err)
-      // handle csv
+      // handle CSV
     })
   })
 })
@@ -56,10 +56,10 @@ app.use(function (err, req, res, next) {
 })
 ```
 
-Still, this isn’t bulletproof. There are two problems with this approach:
+Still, this isn't bulletproof. There are two problems with this approach:
 
 1.  You must explicitly handle _every_ `error` argument.
-2.  Implicit exceptions aren’t handled (like trying to access a property that isn’t available on the `data` object).
+2.  Implicit exceptions aren't handled (like trying to access a property that isn't available on the `data` object).
 
 ## Asynchronous error propagation with promises
 
@@ -74,7 +74,7 @@ app.get('/', function (req, res, next) {
       return makeCsv(data)
     })
     .then(function (csv) {
-      // handle csv
+      // handle CSV
     })
     .catch(next)
 })
@@ -85,15 +85,15 @@ app.use(function (err, req, res, next) {
 
 Now all errors asynchronous and synchronous get propagated to the error middleware. Hurrah!
 
-Well, almost. Promises are a decent asynchronous primitive, but they are kinda verbose despite the welcomed error propagation. Let’s fix this using promise generators.
+Well, almost. Promises are a decent asynchronous primitive, but they are kinda verbose despite the welcomed error propagation. Let's fix this using promise generators.
 
 ## **Cleaner code with generators**
 
-We can improve on this workflow using native [generators]({{< ref "generators.md" >}})[^2]. For this, let’s use a helper to make promise generators called `Bluebird.coroutine`.
+We can improve on this workflow using native [generators]({{< ref "generators.md" >}})[^2]. For this, let's use a helper to make promise generators called `Bluebird.coroutine`.
 
 > This example uses [bluebird](https://github.com/petkaantonov/bluebird), but promise generators exist in all the major promise libraries
 
-First, let’s make Express compatible with promise generators by creating a little `wrap` function:
+First, let's make Express compatible with promise generators by creating a little `wrap` function:
 
 ```js
 var Promise = require('bluebird')
@@ -120,7 +120,7 @@ app.get('/', wrap(function *(req, res) {
   var data = yield queryDb()
   // handle data
   var csv = yield makeCsv(data)
-  // handle csv
+  // handle CSV
 }))
 app.use(function (err, req, res, next) {
   // handle error
@@ -129,13 +129,13 @@ app.use(function (err, req, res, next) {
 
 This is pretty clean and reads well. All normal control structures (like `if/else`) work the same regardless if asynchronously or synchronous executed. Just remember to `yield` the promises.
 
-Let’s look next at the `async/await` and clean things up even more.
+Let's look next at the `async/await` and clean things up even more.
 
 ## Using async/await
 
 The [`async/await` proposal](https://github.com/tc39/ecmascript-asyncawait) behaves just like a promise generator but it can be used in more places (like class methods and arrow functions).
 
-We still need a `wrap` function but it’s simpler as we don’t need `Bluebird.coroutine` or generators. Below is semantically the same as the previous `wrap` function, written in ES6:
+We still need a `wrap` function but it's simpler as we don't need `Bluebird.coroutine` or generators. Below is semantically the same as the previous `wrap` function, written in ES6:
 
 ```js
 let wrap = fn => (...args) => fn(...args).catch(args[2])
@@ -149,7 +149,7 @@ app.get('/', wrap(async function (req, res) {
   let data = await queryDb()
   // handle data
   let csv = await makeCsv(data)
-  // handle csv
+  // handle CSV
 }))
 ```
 
@@ -208,7 +208,7 @@ app.use(function (err, req, res, next) {
 
 There are two caveats with this approach:
 
-1.  You must have all your asynchronous code return promises (except emitters). Raw callbacks simply [don’t have the facilities]({{< ref "post/promises.md" >}}) for this to work. This is getting easier as promises are legit now in ES6\. If a particular library does not return promises, it’s trivial to convert using a helper function like `Bluebird.promisifyAll`.
+1.  You must have all your asynchronous code return promises (except emitters). Raw callbacks simply [don't have the facilities]({{< ref "post/promises.md" >}}) for this to work. This is getting easier as promises are legit now in ES6\. If a particular library does not return promises, it's trivial to convert using a helper function like `Bluebird.promisifyAll`.
 2.  Event emitters (like streams) can still cause uncaught exceptions. So make sure you are handling the `error` event properly.
 
 ```js

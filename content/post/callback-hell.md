@@ -18,13 +18,13 @@ doAsync1(function () {
 })
 ```
 
-Callback hell is subjective, as heavily nested code can be perfectly fine sometimes. Asynchronous code is _hellish_ when it becomes overly complex to manage the flow. A good question to see how much "hell" you are in is: how much refactoring pain would I endure if `doAsync2` happened before `doAsync1`? The goal isn’t about removing levels of indentation but rather writing modular (and testable!) code that is easy to reason about and resilient.
+Callback hell is subjective, as heavily nested code can be perfectly fine sometimes. Asynchronous code is _hellish_ when it becomes overly complex to manage the flow. A good question to see how much "hell" you are in is: how much refactoring pain would I endure if `doAsync2` happened before `doAsync1`? The goal isn't about removing levels of indentation but rather writing modular (and testable!) code that is easy to reason about and resilient.
 
-In this article, we will write a module using a number of tools and libraries to show how control flow can work. We’ll even look at an up and coming solution made possible by the _next_ version of Node.
+In this article, we will write a module using a number of tools and libraries to show how control flow can work. We’ll even look at an up and coming solution made possible by the *next* version of Node.
 
 ## The problem
 
-Let’s say we want to write a module that finds the largest file within a directory.
+Let's say we want to write a module that finds the largest file within a directory.
 
 ```js
 var findLargest = require('./findLargest')
@@ -34,7 +34,7 @@ findLargest('./path/to/dir', function (er, filename) {
 })
 ```
 
-Let’s break down the steps to accomplish this:
+Let's break down the steps to accomplish this:
 
 *   Read the files in the provided directory
 *   Get the [stats](http://nodejs.org/api/fs.html#fs_class_fs_stats) on each file in the directory
@@ -83,7 +83,7 @@ module.exports = function (dir, cb) {
 2. Gets the stats on each file. This is done in parallel so we are using a `counter` to track when all the I/O has finished. We are also using a `errored` boolean to prevent the provided callback (`cb`) from being called more than once if an error occurs.
 3. Collect the stats for each file. Notice we are setting up a parallel array here (files to stats).
 4. Check to see if all parallel operations have completed
-5. Only grab regular files (not links or directories, etc)
+5. Only grab regular files (not links or directories, etc.)
 6. Reduce the list to the largest file
 7. Pull the filename associated with the stat and callback
 
@@ -97,7 +97,7 @@ Our nested approach can be broken out into three modular units:
 *   Grabbing the stats for those files
 *   Processing the stats and files to determine the largest
 
-Since the first task is essentially just `fs.readdir()`, we won’t write a function for that. However, let’s write a function that, given a set of paths, will return all the stats for those paths while maintaining the ordering:
+Since the first task is essentially just `fs.readdir()`, we won't write a function for that. However, let's write a function that, given a set of paths, will return all the stats for those paths while maintaining the ordering:
 
 ```js
 function getStats (paths, cb) {
@@ -132,7 +132,7 @@ function getLargestFile (files, stats) {
 }
 ```
 
-Let’s tie the whole thing together:
+Let's tie the whole thing together:
 
 ```js
 var fs = require('fs')
@@ -154,11 +154,11 @@ module.exports = function (dir, cb) {
 
 1. Generate a list of paths from the files and directory
 
-A modular approach makes reusing and testing methods easier. The main export is easier to reason about as well. However, we are still manually managing the parallel stat task. Let’s switch over to some control flow modules and see what we can do.
+A modular approach makes reusing and testing methods easier. The main export is easier to reason about as well. However, we are still manually managing the parallel stat task. Let's switch over to some control flow modules and see what we can do.
 
 ## An async approach
 
-The [async](https://github.com/caolan/async) module is widely popular and stays close to the Node core way of doing things. Let’s take a look at how we could write this using async:
+The [async](https://github.com/caolan/async) module is widely popular and stays close to the Node core way of doing things. Let's take a look at how we could write this using async:
 
 ```js
 var fs = require('fs')
@@ -198,7 +198,7 @@ The async module guarantees only one callback will be fired. It also propagates 
 
 ## A promises approach
 
-[Promises](http://www.html5rocks.com/en/tutorials/es6/promises/) provide error handling and [functional programming perks]({{< ref "post/promises-2.md" >}}). How would we approach this problem using promises? For that, let’s utilize the [Q](https://github.com/kriskowal/q) module (although other promise libraries could be employed):
+[Promises](http://www.html5rocks.com/en/tutorials/es6/promises/) provide error handling and [functional programming perks]({{< ref "post/promises-2.md" >}}). How would we approach this problem using promises? For that, let's utilize the [Q](https://github.com/kriskowal/q) module (although other promise libraries could be employed):
 
 ```js
 var fs = require('fs')
@@ -230,9 +230,9 @@ module.exports = function (dir) {
 }
 ```
 
-1.  Since Node core functionality isn’t promise-aware, we make it so.
+1.  Since Node core functionality isn't promise-aware, we make it so.
 2.  [Q.all](https://github.com/kriskowal/q/wiki/API-Reference#promiseall) will run all the stat calls in parallel and the result array order is maintained.
-3.  Since we want to pass files and stats to the next `then` function, it’s the last thing returned.
+3.  Since we want to pass files and stats to the next `then` function, it's the last thing returned.
 
 Unlike the previous examples, any _exceptions_ thrown inside the promise chain (i.e. `then`) are caught and handled. The client API changes as well to be promise centric:
 
@@ -245,7 +245,7 @@ findLargest('./path/to/dir')
   .catch(console.error)
 ```
 
-> Although designed this way above, you don’t have to expose a promise interface. Many promise libraries have a way to expose a nodeback style as well. With Q, we could do this using the [nodeify](https://github.com/kriskowal/q/wiki/API-Reference#wiki-promisenodeifycallback) function.
+> Although designed this way above, you don't have to expose a promise interface. Many promise libraries have a way to expose a nodeback style as well. With Q, we could do this using the [nodeify](https://github.com/kriskowal/q/wiki/API-Reference#wiki-promisenodeifycallback) function.
 
 The scope of promises is not developed here. I would recommend reading more about them [here]({{< ref "promises.md" >}}).
 
@@ -257,7 +257,7 @@ Generators are lightweight co-routines for JavaScript. They allow a function to 
 
 > A "thunk" is a function that _returns a callback_ as opposed to calling it_._ The callback has the same signature as your typical nodeback function (i.e. error is the first argument). Read more [here](https://github.com/visionmedia/co#thunks-vs-promises).
 
-Let’s look at one example that enables generators for asynchronous control flow: the [co](https://github.com/visionmedia/co) module from TJ Holowaychuk. Here’s how to write our largest file program:
+Let's look at one example that enables generators for asynchronous control flow: the [co](https://github.com/visionmedia/co) module from TJ Holowaychuk. Here's how to write our largest file program:
 
 ```js
 var co = require('co')
@@ -281,7 +281,7 @@ module.exports = co(function* (dir) { // [2]
 })
 ```
 
-1. Since Node core functionality isn’t "thunk"-aware, we make it so.
+1. Since Node core functionality isn't "thunk"-aware, we make it so.
 2. co takes a generator function which can be suspended at anytime using the `yield` keyword
 3. The generator function will suspend until `readdir` returns. The resulting value is assigned to the `files` variable.
 4. co can also handle arrays a set of parallel operations to perform. A result array with order maintained is assigned to `stats`.
@@ -306,6 +306,6 @@ Co has a lot of neat support for arrays, objects, nested generators, promises an
 
 In this article, we investigated a variety of different approaches to mitigating "callback hell", that is, getting control over the flow of your application. I am personally most intrigued by the generator idea. I am curious how that will play out with new frameworks like [koa](https://github.com/koajs/koa).
 
-Although we didn’t employ it while looking at the 3rd party modules, a modular approach can be applied to any flow libraries (async, promises, generators). Can you think of ways to make the examples more modular? Have a library or technique that has worked well for you? Share it in the comments!
+Although we didn't employ it while looking at the 3rd party modules, a modular approach can be applied to any flow libraries (async, promises, generators). Can you think of ways to make the examples more modular? Have a library or technique that has worked well for you? Share it in the comments!
 
 > Want to check out and play with all the code samples used in this article as well as another generator example? There is a [GitHub repo](https://github.com/strongloop-community/handling-callback-hell) set up for that!

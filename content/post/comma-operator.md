@@ -15,10 +15,10 @@ function selectNextColor(){
 }
 ```
 
-So, what’s this all about:
+So, what's this all about:
 
 ```js
 return colors[colorIndex++] || colors[colorIndex = 0, colorIndex++]
 ```
 
-If the current index exists in the array, use it. If not, reset the index to `0`, then grab the current index (which is now `0`), and use that.  The mystery of the comma operator is that only the last value, `colorIndex++`, gets returned to the array and I’m using the first expression to perform an assignment -- `colorIndex = 0`.
+If the current index exists in the array, use it. If not, reset the index to `0`, then grab the current index (which is now `0`), and use that.  The mystery of the comma operator is that only the last value, `colorIndex++`, gets returned to the array and I'm using the first expression to perform an assignment -- `colorIndex = 0`.

@@ -109,7 +109,7 @@ map(['list', 'of', 'files'], statCache).then(console.log, console.error)
 
 Here, `statCache` returns a value or a promise. Regardless of what's returned, we can group it and provide the results with `Promise.all`. Sweet!
 
-> How can this work? The `Promise.all` method also takes in values as arguments which internally it tranforms into a promises fulfilled to those values.
+> How can this work? The `Promise.all` method also takes in values as arguments which internally it transforms into a promises fulfilled to those values.
 
 However, there is a problem with our `map` function. What if an exception is thrown in `statCache`? Right now, the exception wouldn't be caught since it isn't in a promise chain. Here is where `Promise.resolve` comes in:
 

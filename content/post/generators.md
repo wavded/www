@@ -16,7 +16,7 @@ console.log(b)
 
 However, this is just _one_ use case (although a clever one) of using generators.
 
-In this article, we will explore the strengths of using generators. There is a [GitHub repository](https://github.com/strongloop/example-generators) with the code samples we will go through that you can check out. You will also need Node 0.11.x or greater (w/ the `—harmony` flag) to run these examples. I personally use [nvm](https://github.com/creationix/nvm) for this.
+In this article, we will explore the strengths of using generators. There is a [GitHub repository](https://github.com/strongloop/example-generators) with the code samples we will go through that you can check out. You will also need Node 0.11.x or greater (with the `—harmony` flag) to run these examples. I personally use [nvm](https://github.com/creationix/nvm) for this.
 
 ## What is a generator?
 

@@ -31,7 +31,7 @@ function hash2item (hash) {
 
 ## Using `$self` in JavaScript functions
 
-The `$self` concept made me think about vanilla functions in JavaScript.  Although they don’t have a helpful `this` reference (i.e. global object), you can use something like `$self` in Perl to reference the function itself and use it as an object:
+The `$self` concept made me think about vanilla functions in JavaScript.  Although they don't have a helpful `this` reference (i.e. global object), you can use something like `$self` in Perl to reference the function itself and use it as an object:
 
 ```js
 function renderElement() {

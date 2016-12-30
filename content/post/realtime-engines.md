@@ -6,7 +6,7 @@ tags: ["nodejs", "websocket"]
 title: Real-time engines in Node
 ---
 
-Node arrived on the scene around the time the WebSocket protocol was drafted. Node's fast, evented approach to server-side programming was a perfect pairing for WebSocket. Out of that marriage emerged the popular [socket.io framework](http://socket.io/): an instant favorite used heavily in the first [Node Knockout](http://nodeknockout.com/) competition.
+Node arrived on the scene around the time the WebSocket protocol was drafted. Node's fast, event-driven approach to server-side programming was a perfect pairing for WebSocket. Out of that marriage emerged the popular [socket.io framework](http://socket.io/): an instant favorite used heavily in the first [Node Knockout](http://nodeknockout.com/) competition.
 
 Now that WebSocket is [mature](http://tools.ietf.org/html/rfc6455) and has support in [all the modern desktop browsers](http://caniuse.com/#search=websocket) and most mobile platforms, the dust has settled a bit. Let's take a look at what's available in Node for WebSocket.
 
@@ -70,7 +70,7 @@ The [websocket-multiplex](https://github.com/sockjs/websocket-multiplex) module 
 
 ### Module: primus
 
-The [primus](https://github.com/primus/primus) module wraps around several real-time frameworks, such as engine.io and sockjs, to prevent vender lock-in. It includes a number of modules that add the functionality you need: channels (multiplexing), custom event emitters, rooms, etc.
+The [primus](https://github.com/primus/primus) module wraps around several real-time frameworks, such as engine.io and sockjs, to prevent vendor lock-in. It includes a number of modules that add the functionality you need: channels (multiplexing), custom event emitters, rooms, etc.
 
 ## A fireside chat about real-time engines
 
