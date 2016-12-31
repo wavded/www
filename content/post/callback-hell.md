@@ -1,14 +1,19 @@
 ---
-commentURL: ""
-date: 2014-03-03T15:00:53-06:00
-strongloopURL: "https://strongloop.com/strongblog/node-js-callback-hell-promises-generators/"
-tags: ["nodejs","generators","promises","callbacks","javascript"]
-title: "Managing callback hell with promises, generators, and other approaches"
+commentURL: ''
+date: 2014-03-03T21:00:53.000Z
+strongloopURL: 'https://strongloop.com/strongblog/node-js-callback-hell-promises-generators/'
+tags:
+  - nodejs
+  - generators
+  - promises
+  - callbacks
+  - javascript
+title: 'Managing callback hell with promises, generators, and other approaches'
 ---
 
 We know it most endearingly as "callback hell" or the "pyramid of doom":
 
-```js
+```javascript
 doAsync1(function () {
   doAsync2(function () {
     doAsync3(function () {
@@ -20,13 +25,13 @@ doAsync1(function () {
 
 Callback hell is subjective, as heavily nested code can be perfectly fine sometimes. Asynchronous code is _hellish_ when it becomes overly complex to manage the flow. A good question to see how much "hell" you are in is: how much refactoring pain would I endure if `doAsync2` happened before `doAsync1`? The goal isn't about removing levels of indentation but rather writing modular (and testable!) code that is easy to reason about and resilient.
 
-In this article, we will write a module using a number of tools and libraries to show how control flow can work. We’ll even look at an up and coming solution made possible by the *next* version of Node.
+In this article, we will write a module using a number of tools and libraries to show how control flow can work. We'll even look at an up and coming solution made possible by the _next_ version of Node.
 
-## The problem
+# The problem
 
 Let's say we want to write a module that finds the largest file within a directory.
 
-```js
+```javascript
 var findLargest = require('./findLargest')
 findLargest('./path/to/dir', function (er, filename) {
   if (er) return console.error(er)
@@ -36,18 +41,18 @@ findLargest('./path/to/dir', function (er, filename) {
 
 Let's break down the steps to accomplish this:
 
-*   Read the files in the provided directory
-*   Get the [stats](http://nodejs.org/api/fs.html#fs_class_fs_stats) on each file in the directory
-*   Determine which is largest (pick one if multiple have the same size)
-*   Callback with the name of the largest file
+- Read the files in the provided directory
+- Get the [stats](http://nodejs.org/api/fs.html#fs_class_fs_stats) on each file in the directory
+- Determine which is largest (pick one if multiple have the same size)
+- Callback with the name of the largest file
 
 If an error occurs at any point, callback with that error instead. We also should never call the callback more than once.
 
-## A nested approach
+# A nested approach
 
 The first approach is nested, not horribly, but the logic reads inward.
 
-```js
+```javascript
 var fs = require('fs')
 var path = require('path')
 module.exports = function (dir, cb) {
@@ -87,19 +92,19 @@ module.exports = function (dir, cb) {
 6. Reduce the list to the largest file
 7. Pull the filename associated with the stat and callback
 
-This may be a perfectly fine approach to solving this problem. However, its tricky to manage the parallel operation and ensure we only callback once. We’ll look at managing that a little later, but lets first look at breaking this into smaller modular chunks first.
+This may be a perfectly fine approach to solving this problem. However, its tricky to manage the parallel operation and ensure we only callback once. We'll look at managing that a little later, but lets first look at breaking this into smaller modular chunks first.
 
-## A modular approach
+# A modular approach
 
 Our nested approach can be broken out into three modular units:
 
-*   Grabbing the files from a directory
-*   Grabbing the stats for those files
-*   Processing the stats and files to determine the largest
+- Grabbing the files from a directory
+- Grabbing the stats for those files
+- Processing the stats and files to determine the largest
 
 Since the first task is essentially just `fs.readdir()`, we won't write a function for that. However, let's write a function that, given a set of paths, will return all the stats for those paths while maintaining the ordering:
 
-```js
+```javascript
 function getStats (paths, cb) {
   var counter = paths.length
   var errored = false
@@ -120,7 +125,7 @@ function getStats (paths, cb) {
 
 Now, we need a processing function that compares the stats and files and returns the largest filename:
 
-```js
+```javascript
 function getLargestFile (files, stats) {
   var largest = stats
     .filter(function (stat) { return stat.isFile() })
@@ -134,7 +139,7 @@ function getLargestFile (files, stats) {
 
 Let's tie the whole thing together:
 
-```js
+```javascript
 var fs = require('fs')
 var path = require('path')
 module.exports = function (dir, cb) {
@@ -156,11 +161,11 @@ module.exports = function (dir, cb) {
 
 A modular approach makes reusing and testing methods easier. The main export is easier to reason about as well. However, we are still manually managing the parallel stat task. Let's switch over to some control flow modules and see what we can do.
 
-## An async approach
+# An async approach
 
 The [async](https://github.com/caolan/async) module is widely popular and stays close to the Node core way of doing things. Let's take a look at how we could write this using async:
 
-```js
+```javascript
 var fs = require('fs')
 var async = require('async')
 var path = require('path')
@@ -187,7 +192,6 @@ module.exports = function (dir, cb) {
     }
   ], cb) // [3]
 }
-
 ```
 
 1. [async.waterfall](https://github.com/caolan/async#waterfalltasks-callback) provides a series flow of execution where data from one operation can be passed to the next function in the series using the `next` callback.
@@ -196,11 +200,11 @@ module.exports = function (dir, cb) {
 
 The async module guarantees only one callback will be fired. It also propagates errors and manages parallelism for us.
 
-## A promises approach
+# A promises approach
 
 [Promises](http://www.html5rocks.com/en/tutorials/es6/promises/) provide error handling and [functional programming perks]({{< ref "post/promises-2.md" >}}). How would we approach this problem using promises? For that, let's utilize the [Q](https://github.com/kriskowal/q) module (although other promise libraries could be employed):
 
-```js
+```javascript
 var fs = require('fs')
 var path = require('path')
 var Q = require('q')
@@ -230,13 +234,13 @@ module.exports = function (dir) {
 }
 ```
 
-1.  Since Node core functionality isn't promise-aware, we make it so.
-2.  [Q.all](https://github.com/kriskowal/q/wiki/API-Reference#promiseall) will run all the stat calls in parallel and the result array order is maintained.
-3.  Since we want to pass files and stats to the next `then` function, it's the last thing returned.
+1. Since Node core functionality isn't promise-aware, we make it so.
+2. [Q.all](https://github.com/kriskowal/q/wiki/API-Reference#promiseall) will run all the stat calls in parallel and the result array order is maintained.
+3. Since we want to pass files and stats to the next `then` function, it's the last thing returned.
 
 Unlike the previous examples, any _exceptions_ thrown inside the promise chain (i.e. `then`) are caught and handled. The client API changes as well to be promise centric:
 
-```js
+```javascript
 var findLargest = require('./findLargest')
 findLargest('./path/to/dir')
   .then(function (filename) {
@@ -249,7 +253,7 @@ findLargest('./path/to/dir')
 
 The scope of promises is not developed here. I would recommend reading more about them [here]({{< ref "promises.md" >}}).
 
-## A generators approach
+# A generators approach
 
 As promised in at the beginning of the article, there is a new kid on the block that is available to play with in Node >=0.11.2: _generators!_
 
@@ -259,7 +263,7 @@ Generators are lightweight co-routines for JavaScript. They allow a function to 
 
 Let's look at one example that enables generators for asynchronous control flow: the [co](https://github.com/visionmedia/co) module from TJ Holowaychuk. Here's how to write our largest file program:
 
-```js
+```javascript
 var co = require('co')
 var thunkify = require('thunkify')
 var fs = require('fs')
@@ -289,20 +293,19 @@ module.exports = co(function* (dir) { // [2]
 
 We can consume this generator function with the same callback API we specified at the beginning of this article. Co has some nice error handling as any errors (including exceptions raised) will be passed to the callback function. Generators also enable the use of try/catch blocks around yield statements which co takes advantage of:
 
-```js
+```javascript
 try {
   var files = yield readdir(dir)
 } catch (er) {
   console.error('something happened whilst reading the directory')
 }
-
 ```
 
 Co has a lot of neat support for arrays, objects, nested generators, promises and more.
 
 > There are other generator modules rising up as well. The Q module has a neat [Q.async](https://github.com/kriskowal/q/wiki/API-Reference#qasyncgeneratorfunction) method that behaves similarly to co using generators.
 
-## Wrapping up
+# Wrapping up
 
 In this article, we investigated a variety of different approaches to mitigating "callback hell", that is, getting control over the flow of your application. I am personally most intrigued by the generator idea. I am curious how that will play out with new frameworks like [koa](https://github.com/koajs/koa).
 

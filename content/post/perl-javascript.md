@@ -1,17 +1,18 @@
 ---
-date: 2010-10-26T15:00:53-06:00
-tags: ["javascript","perl"]
-title: "Influenced by Perl: JavaScript function storage"
-
+date: 2010-10-26T21:00:53.000Z
+tags:
+  - javascript
+  - perl
+title: 'Influenced by Perl: JavaScript function storage'
 ---
 
-I'm interested in various language paradigms, syntax, and behavior.  Whenever I learn a new language, it helps me rethink other languages. Recently, that language has been Perl.
+I'm interested in various language paradigms, syntax, and behavior. Whenever I learn a new language, it helps me rethink other languages. Recently, that language has been Perl.
 
-## Perl subroutines
+# Perl subroutines
 
-Functions in Perl do not have parameter lists like most C-style languages.  Instead you have to `shift` off the arguments within the body of the subroutine for a class, for example:
+Functions in Perl do not have parameter lists like most C-style languages. Instead you have to `shift` off the arguments within the body of the subroutine for a class, for example:
 
-```pl
+```perl
 sub hash2item {
   my $self=shift;
   my $hash=shift;
@@ -19,21 +20,21 @@ sub hash2item {
 }
 ```
 
-The first argument shifted off is a reference to the object itself (named `$self` here).  The first parameter passed to the function is `$hash`.
+The first argument shifted off is a reference to the object itself (named `$self` here). The first parameter passed to the function is `$hash`.
 
 In JavaScript, this would be akin to a method like:
 
-```js
+```javascript
 function hash2item (hash) {
   var self = this
 }
 ```
 
-## Using `$self` in JavaScript functions
+# Using `$self` in JavaScript functions
 
-The `$self` concept made me think about vanilla functions in JavaScript.  Although they don't have a helpful `this` reference (i.e. global object), you can use something like `$self` in Perl to reference the function itself and use it as an object:
+The `$self` concept made me think about vanilla functions in JavaScript. Although they don't have a helpful `this` reference (i.e. global object), you can use something like `$self` in Perl to reference the function itself and use it as an object:
 
-```js
+```javascript
 function renderElement() {
   var self = renderElement
   var element = null
@@ -49,11 +50,11 @@ function renderElement() {
 }
 ```
 
-The first time we call `renderElement`, we create and cache an element on the function object itself.  On subsequent calls, we utilize the data stored on the object.
+The first time we call `renderElement`, we create and cache an element on the function object itself. On subsequent calls, we utilize the data stored on the object.
 
 This example helps clean up parent scope `var` clutter found below when storing data:
 
-```js
+```javascript
 var renderedEl
 function renderElement() {
   var element

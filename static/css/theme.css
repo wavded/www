@@ -282,10 +282,16 @@ h6 {
   margin-bottom: 5px;
 }
 
+h1.post-title {
+  font-size: 35px;
+  line-height: 36px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
 h1 {
   font-size: 30px;
   line-height: 36px;
-  margin-bottom: 10px;
   font-weight: 600;
 }
 
