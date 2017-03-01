@@ -7,7 +7,6 @@ tags:
   - javascript
   - nodejs
 title: Systematic function design in JavaScript
-draft: true
 ---
 
 Habits can be damning or liberating. Perhaps you are like me. I know having tests, examples, and documentation are good things for any program but why do they always seem to be an afterthought? Wouldn't it be great to have a coding methodology that propels me to write well-documented and tested programs that are easy to change? Thankfully, a team of professors/researchers have tackled this very problem and distilled their insights in what is called [systematic program design](https://www.edx.org/xseries/how-code-systematic-program-design) or the [HtDP](http://www.ccs.neu.edu/home/matthias/HtDP2e/) methodology (How to Design Programs).
