@@ -137,7 +137,7 @@ Note that it is normal to revisit the other pieces of the formula as you work th
 
 # Wrap-up
 
-In this article, we looked at how to do design functions following the HtDP method. In the next article, we are going to look at how to design data and you'll see how the templates start to get more interesting.
+In this article, we looked at how to design functions following the HtDP method. In the next article, we are going to look at how to design data and you'll see how the templates start to get more interesting.
 
 In the meantime, try following this method step-by-step and write the following functions:
 

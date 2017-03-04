@@ -107,7 +107,7 @@ Take a moment to come up with a clear and concise interpretation of the coordina
 
 ## 3\. Examples
 
-Examples provide more explanation of type if it would be helpful. Depending on whether type is self-defining. For an enumeration like `TrafficLight`, all the possible examples are already encapsulated in the type comment so examples are not necessary. In the same way, a simple atomic type like `Natural` documents its cases.
+Examples provide more explanation of a data definition, if it would be helpful. Depending on whether type is self-defining. For an enumeration like `TrafficLight`, all the possible examples are already encapsulated in the type comment so examples are not necessary. In the same way, a simple atomic type like `Natural` documents its cases.
 
 However, `Coordinate` can be clarified with examples:
 
@@ -172,6 +172,13 @@ function isStopped(tl) {
   return false
 }
 ```
+
+# Wrap-up
+
+In this article, we looked at how to design data following the HtDP method. In the next article, we are going to look at how to design worlds and you'll see how to put this all together in designing programs. Here are some tasks to work on until then:
+
+1. Write a data definition following the steps above representing the state of a door. The door can either be opened or shut.
+2. Write an data definition representing the state of a light bulb. If it is on, its brightness can range from 1 to 10 (10 being the brightest). It also can be off. Include any special cases in your interpretation.
 
 [1]: {{< ref "post/htdp-functions.md" >}}
 
