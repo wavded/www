@@ -1,7 +1,6 @@
 ---
 commentURL: ''
-date: 2016-12-15T21:00:53.000Z
-strongloopURL: 'https://strongloop.com/strongblog/systematic-function-design-in-javascript/'
+date: 2017-03-02T21:00:53.000Z
 tags:
   - design
   - javascript
@@ -35,7 +34,7 @@ Data definitions also help us distinguish between similar data. For example, the
 
 ## Atomicity
 
-Data should be _atomic_, meaning it should be _reduced to its essence_ without loosing meaning. For instance, we could define a city as a string or we could define a city as a list of characters. Although, technically a city is made up of a list of characters, those characters have to be meaningfully formed together to be used in our domain.
+Data should be _atomic_, meaning it should be _reduced to its essence_ without losing meaning. For instance, we could define a city as a string or we could define a city as a list of characters. Although, technically a city is made up of a list of characters, those characters have to be meaningfully formed together to be used in our domain.
 
 Similarly, atomic data is _specific_. Even though a traffic light could be represented by any number of strings, it is specifically the strings `"green"`, `"red"`, and `"yellow"`.
 
@@ -178,7 +177,8 @@ function isStopped(tl) {
 In this article, we looked at how to design data following the HtDP method. In the next article, we are going to look at how to design worlds and you'll see how to put this all together in designing programs. Here are some tasks to work on until then:
 
 1. Write a data definition following the steps above representing the state of a door. The door can either be opened or shut.
-2. Write an data definition representing the state of a light bulb. If it is on, its brightness can range from 1 to 10 (10 being the brightest). It also can be off. Include any special cases in your interpretation.
+2. Write a data definition representing the state of a light bulb. If it is on, its brightness can range from 1 to 10 (10 being the brightest). It also can be off. Include any special cases in your interpretation.
+3. Write a function called `increaseBrightness`, _following the [designing functions process][1]_, that operates on the light bulb data type created prior. If the light bulb is off, it should be set to a brightness of `1`. Otherwise, it should increase the brightness by `1` until it reaches `10`. Once it reaches `10`, `increaseBrightness` will no longer have any effect.
 
 [1]: {{< ref "post/htdp-functions.md" >}}
 
