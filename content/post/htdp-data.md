@@ -148,7 +148,7 @@ function tmplForNatural(n) {
 }
 ```
 
-You may be wondering, why even write a template this simple. In practice, you probably won't. Templates are intended to be copied when writing functions that operate on the given data. By writing a template you can easily see all the scenarios you need to account for in your function. Anything you determine to not be needed can be cut out.
+You may be wondering, why even write a template this simple. In practice, you probably won't. Templates are intended to be copied when writing functions that operate on the given data. By writing a template you can easily see all the scenarios you need to account for in your function. You can cut out anything you determine is not needed.
 
 # Writing functions using data definitions
 
