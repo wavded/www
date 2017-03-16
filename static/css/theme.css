@@ -432,13 +432,6 @@ blockquote:after {
 }
 
 /* List */
-ol,
-li {
-  margin-left: 0;
-  padding-left: 20px;
-  text-indent: -20px;
-}
-
 ul {
   margin-bottom: 20px;
   list-style-position: inside;
@@ -454,9 +447,18 @@ ol ol {
   margin-bottom: 0;
 }
 
-li {
+/* Article List */
+article ol,
+article li {
+  margin-left: 0;
+  padding-left: 20px;
+  text-indent: -20px;
+}
+
+article li {
   margin-bottom: 10px;
 }
+
 
 /* Form */
 fieldset {
