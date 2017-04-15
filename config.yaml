@@ -1,11 +1,11 @@
 ---
 title: Andrew.
-copyright: ©2010-2016 Marc Andrew Harter
+copyright: ©2010-2017 Marc Andrew Harter
 
 baseURL: http://wavded.com
-buildDrafts: True
-disableHugoGeneratorInject: True
-pygmentsCodeFences: True
+buildDrafts: true
+disableHugoGeneratorInject: true
+pygmentsCodeFences: true
 pygmentsStyle: manni
 footnoteReturnLinkContents: "↩"
 metaDataFormat: "yaml"
