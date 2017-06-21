@@ -32,6 +32,14 @@ This aspect of systematic design has nothing to do with code and it should prece
 3. What functions will I need to bring about those changes?
 4. Illustrate or describe the possible states.
 
+# Constants and configuration
+
+What about my program doesn't change? What will be constant? List those things.
+
+# Changing data
+
+What changes in my program? What kinds of changes?
+
 > Show worksheet.
 
 [1]: {{< ref "post/htdp-functions.md" >}}

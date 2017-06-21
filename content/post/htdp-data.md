@@ -1,12 +1,11 @@
 ---
 commentURL: ''
-date: 2017-03-02T21:00:53.000Z
+date: 2017-04-02T21:00:53.000Z
 tags:
   - design
   - javascript
   - nodejs
 title: Systematic data design in JavaScript
-draft: true
 ---
 
 In the previous article, we discussed [systematic function design][1]: a test, example, and documentation-driven approach to designing functions using the [HtDP methodology][3].
