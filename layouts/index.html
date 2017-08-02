@@ -3,7 +3,7 @@
   {{ partial "shortbio" . }}
   <br/>
   <div>
-    <h2>Posts:</h2>
+    <h2>Latest posts:</h2>
     <ul>
     {{ range .Data.Pages }}
     {{ if and (not .Draft) (eq .Type "post") }}
