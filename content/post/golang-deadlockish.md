@@ -1,22 +1,21 @@
 ---
 commentURL: ''
-date: 2018-02-11T21:00:53.000Z
+date: 2018-02-12T10:00:53.000Z
 tags:
   - golang
   - deadlock
-title: 'Debugging a deadlock(ish) in Go'
-draft: true
+title: 'Debugging a potential deadlock in Go with go-deadlock'
 ---
 
-Recently, I tackled a reoccurring issue that had me stumped for weeks. We tended to "do stuff"[^1] and then the problem would go away only to come back a few days to a week later. However, after some hours of debugging it made complete sense. We had just been looking for the problem in the wrong place. I thought I'd share.
+Recently, I tackled a reoccurring issue whose cause wasn't clear for weeks. My team would "do stuff"[^1], and then the problem would go away only to come back a few days to a week later. However, after some hours of debugging it made complete sense. I had just been looking for the problem in the wrong place. I thought I'd share.
 
-The issue was this. Every week or so, we would get a bug report from one particular client stating our web application was taking a long time to load or didn't seem to load at all, or that actions were slow. It appeared to only happen for this client and we were all able to replicate it. Yet, it would generally clear up after a restart of a backing service or cleaning up some data.
+The issue was this. Every week or so, we would get a bug report from a client stating our web application was taking a long time to load, didn't seem to load at all, or that actions were slow. It appeared to only happen for one client at a time and we were all able to see the behavior when it happened. Yet, it would generally clear up after a restart of a backing service or cleaning up some data.
 
-However, this time, our quick fixes were not working. The application was not recovering. Why?!
+However, this time, our quick fixes were not working. The application was not recovering. What was going on?!
 
 # Waiting your turn
 
-In one of our backing services for the application, each client has its own room, so to speak, and we were locking the `members` before we'd broadcast to the room in order to ensure none of the them get removed or added while looping (causing a panic/crash).  Like so:
+In one of our backing services for the application, each group has its own `Room`, so to speak. We were locking the `members` list before we'd broadcast a message to the room to avoid any data races or possible crashes.  Like so:
 
 ```go
 func (r *Room) Broadcast(msg string) {
@@ -44,13 +43,20 @@ func (r *Room) Add(s sockjs.Session) {
 }
 ```
 
-We could never obtain a lock _❶_ because our `Broadcast` function was still using it to send out messages.
+We couldn't obtain a lock _❶_ because our `Broadcast` function was still using it to send out messages.
 
 # Finding the problem
 
-The bug behavior pointed to something in the backing service that was getting hung up, but how did we find out where? Thankfully, with the help of [go-deadlock](https://github.com/sasha-s/go-deadlock), a tool that tracks live mutex usage, we could see that this was occurring. The tool reports when a goroutine has had access to a mutex for 30 seconds or more[^2]. The API mirrors the standard Go libraries making it an easy drop-in checker. The results pointed to the `Add` function waiting on the `Broadcast` function.
+Initial investigations pointed to something in the backing service that was getting hung up, but how did we find out where?
 
-All of a sudden the client reports made total sense (especially when we found out they were dealing with network sluggishness). A member suffering from high latency joins the room (`Add`) with other members. As soon as they pulling an update (`Broadcast`), all the members start noticing slow updates. Members reload the application, with hopes that it will fix the problem, and try to rejoin (`Add`). However, they cannot because they are waiting for a (`Broadcast`) to finish slowed down by the high latency member.
+Thankfully, with the help of [go-deadlock](https://github.com/sasha-s/go-deadlock), a tool that tracks live mutex usage, we could see that this was occurring. The tool reports when a goroutine has had access to a mutex for 30 seconds or more[^2]. The API mirrors the standard Go libraries making it an easy drop-in checker. The results pointed to the `Add` function waiting on the `Broadcast` function to release its lock.
+
+All of a sudden the client reports made total sense (especially when we found out they were dealing with network sluggishness).
+
+1. A member suffering from high latency joins the room (`Add`) with other members.
+2. As soon as they pulled an update (`Broadcast`), all the members start noticing slow updates.
+3. Members reload the application, with hopes that it will fix the problem, and try to rejoin (`Add`).
+4. However, they cannot because they are waiting for a (`Broadcast`) to finish because it has been slowed down by the high latency member.
 
 # The solution
 
@@ -77,9 +83,9 @@ This has a few advantages:
 3. Since goroutines are cheap and the sockets are already established (via WebSocket). Multiple asynchronous calls like this shouldn't be an issue.
 
 # Lessons (re)learned
-This particular service that causes the application to fail had been in production for many months without any reported issues which led to the false assumption that the service was doing great as it handles hundreds of thousands of messages a day. However, it wasn't OK. It had a glaring issue brought to light given the right circumstances.
+This particular service that caused the application to fail had been in production for many months without any reported issues of this kind which led to the false assumption that the service was doing great as it handles hundreds of thousands of messages a day. However, it wasn't OK. It had a glaring issue brought to light given the right circumstances.
 
-I now plan to ask my future self when using mutex or similar: Can a slow I/O cause undesirable behavior when it involves data guarded by a mutex? Also, kudos the to go-deadlock project!
+I now plan to ask my future self when using mutex or similar: Can slow I/O cause undesirable behavior when it involves data guarded by a mutex?
 
 [^1]: Clearly a technical term when you restart servers that appear effected to hopefully get them in a better state 😂.
 [^2]: In our case, it wasn't a complete deadlock in that the goroutine would eventually relinquish access.
