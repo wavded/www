@@ -1,5 +1,5 @@
 ---
-commentURL: ''
+commentURL: 'https://news.ycombinator.com/item?id=16359977'
 date: 2018-02-12T10:00:53.000Z
 tags:
   - golang
