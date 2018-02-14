@@ -1,5 +1,5 @@
 ---
-commentURL: 'https://news.ycombinator.com/item?id=16359977'
+commentURL: 'https://www.reddit.com/r/golang/comments/7x98op/debugging_a_potential_deadlock_in_go_with/'
 date: 2018-02-12T10:00:53.000Z
 tags:
   - golang
@@ -81,6 +81,8 @@ This has a few advantages:
 1. No member needs to wait on another to get a broadcast message.
 2. Members join a room without having to wait.
 3. Since goroutines are cheap and the sockets are already established (via WebSocket). Multiple asynchronous calls like this shouldn't be an issue.
+
+> As pointed out [in the discussion](https://www.reddit.com/r/golang/comments/7x98op/debugging_a_potential_deadlock_in_go_with/), this solution has no guarantees that the messages will be delivered in order and that may not be OK for your application.
 
 # Lessons (re)learned
 This particular service that caused the application to fail had been in production for many months without any reported issues of this kind which led to the false assumption that the service was doing great as it handles hundreds of thousands of messages a day. However, it wasn't OK. It had a glaring issue brought to light given the right circumstances.
