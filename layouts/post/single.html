@@ -20,7 +20,10 @@
 
   <hr class="finale"/>
 {{ with .Params.strongloopURL }}
-  <p><i>This article originally was published on the <a href="{{ . }}">Strongloop blog</a>.</i></p>
+  <p><i>This article originally was published on the <a rel="canonical" href="{{ . }}">Strongloop blog</a>.</i></p>
+{{ end }}
+{{ with .Params.ibmURL }}
+  <p><i>This article originally was published on the <a rel="canonical" href="{{ . }}">IBM Developer blog</a>.</i></p>
 {{ end }}
   <p>
     <b>What do you think?</b>
