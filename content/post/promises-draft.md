@@ -48,8 +48,6 @@ What is a promise? Let's look at a definition:
 
 > A promise is an abstraction for asynchronous programming. It's an object that proxies for the return value or the exception thrown by a function that has to do some asynchronous processing. -- [Kris Kowal on JSJ](http://javascriptjabber.com/037-jsj-promises-with-domenic-denicola-and-kris-kowal/)
 
-Callbacks are the simplest possible mechanism for handling asynchronous code in JavaScript. Yet, raw callbacks sacrifice the control flow, exception handling, and function semantics that developers are familiar with in synchronous code. Promises offer a way to get that control back.
-
 The core component of a promise object is its `then` method. The `then` method is how you get the return value (known as the _fulfillment value_) or the exception thrown (known as the _rejection reason_) from an asynchronous operation. `then` takes two optional callbacks as arguments, which we'll call `onFulfilled` and `onRejected`:
 
 ```javascript
