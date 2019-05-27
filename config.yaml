@@ -4,6 +4,7 @@ copyright: ©2010-2018 Marc Andrew Harter
 
 baseURL: http://wavded.com
 buildDrafts: true
+buildFuture: true
 disableHugoGeneratorInject: true
 pygmentsCodeFences: true
 pygmentsStyle: manni
