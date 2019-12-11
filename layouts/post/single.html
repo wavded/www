@@ -5,7 +5,8 @@
   {{ end }}
 
   <aside class="meta">
-    <b>{{ .Lastmod.Format "2 Jan 2006" }}</b>
+    Updated <b>{{ .Lastmod.Format "January 2, 2006" }}</b> |
+    Published {{ .Date.Format "January 2, 2006" }}
     ({{ .FuzzyWordCount }} Words/{{ .ReadingTime }} Minutes)
     <br class="brk" />
     {{ range .Params.tags }}
