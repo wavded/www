@@ -2,3 +2,4 @@
 public
 resources
 dist
+.nyc_output

@@ -15,7 +15,7 @@ Callbacks are the simplest possible mechanism for handling asynchronous code in 
 
 ```javascript
 // Asynchronous operations return no meaningful value
-var noValue = fs.readFile('file1.txt', function(err, buf) {
+let noValue = fs.readFile('file1.txt', function(err, buf) {
   // Errors are explicitly handled every time
   if (err) return handleErr(err)
   fs.readFile('file2.txt', function(err2, buf2) {
