@@ -49,11 +49,11 @@ Armed with this knowledge, we can create a recursive chain that calls a function
 ```javascript
 function forever(fn) {
   return fn().then(function() {
-    return forever(fn) // re-execute if successful
+    return forever(fn) // Re-execute if successful
   })
 }
-// console.error called if an error occurs
-forever(doThis).then(undefined, console.error)
+// If an error occurs, log and done
+forever(doThis).catch(console.error)
 ```
 
 > **Won't this blow the stack?** No, because Promises/A+ requires the `onFulfilled` and `onRejected` handlers to trigger on a future turn in the event loop after the stack unwinds (3.2.4 in Promises/A+).
@@ -70,7 +70,7 @@ Promises provide some tools out of the box to aid in composition. We'll focus on
 Here is an example:
 
 ```js
-Promise.resolve('monkeys').then(console.log) // will log 'monkeys'
+Promise.resolve('monkeys').then(console.log) // Will log 'monkeys'
 ```
 
 The second tool is `Promise.all`. It takes an array of promises and returns a new promise, which we'll call a "group" promise. The group promise will either be:
@@ -95,11 +95,11 @@ Let's look at iterating through collections of data that require asynchronous ac
 
 ```js
 function promiseMap(xs, fn) {
-  // Execute the function for each element in the array and collect the results.
+  // Execute the function for each element in the array and collect the results
   let promises = xs.map(function(x) {
     return fn(x)
   })
-  return Promise.all(promises) // Return the group promise.
+  return Promise.all(promises) // Return the group promise
 }
 ```
 
