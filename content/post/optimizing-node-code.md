@@ -1,132 +1,166 @@
 ---
-title: Tips for optimizing slow code in Node
-date: '2016-02-06T16:49:04-06:00'
-strongloopURL: 'https://strongloop.com/strongblog/tips-optimizing-slow-code-in-nodejs/'
+title: Profiling slow code in Node.js
+date: '2019-06-01'
+ibmURL: ''
 tags:
   - performance
   - optimization
   - nodejs
 ---
 
-Node.js programs can be slow due to CPU or IO bound operations. On the CPU side, typically there is a "hot path" (a code that is visited often) that is not optimized. On the IO side, limits imposed by either the underlying OS or Node itself may be at fault. Or, a slow application may have nothing to do with Node; instead, an outside resource, like database queries or a slow API call, may not be optimized.
+Let's set the scene. An alert comes in, and it looks like CPU usage is high for one of your Node applications. The support team just received a call from one of your clients. You restart the application to hopefully get clients back up and running but sure enough, the CPU is climbing again. Looks like someone or something stumbled into a _hot path_, a highly trafficked path, in the code. What do you do? Why is it slow?
 
-In this article, we will focus on identifying and optimizing CPU heavy operations in our codebase. We will explore taking profiles of our production application in order to analyze them and make changes to improve efficiency.
+Take a deep breath, you can do this. Node has some built-in tools at your disposal.
 
-Avoiding heavy CPU usage is especially important for servers[^1] due to Node's single-threaded nature. Time spent on the CPU takes away time for servicing other requests. If you notice your application is responding slowly and the CPU is consistently higher for the process, profiling your application helps find bottlenecks and bring your program back to a speedy state.
+> Avoiding heavy CPU usage is important for servers due to Node's single-threaded nature. Time spent on the CPU takes time away from servicing other requests. If your application is slow to respond and the CPU runs consistently higher for the process, profiling your application will help find bottlenecks. Result? Your program is back to a speedy state.
 
-# Profiling applications
+In this article, we'll focus on debugging applications in a remote environment (such as a staging or production server). However, these concepts also work in a local environment.
 
-Duplicating sluggish application issues that occur in production is hard and time consuming. Thankfully, you don't have to do that. You can gather profile data on the production servers themselves to analyze offline. Let's look at a few ways to do that.
+# Profiling using the --inspect flag.
 
-## Using kernel level tools
-
-First, you can use kernel level tools, such as DTrace (Solaris, BSD), perf (Linux), and XPerf (Windows), to gather stack traces from running processes and then generate [flame graphs](http://www.brendangregg.com/FlameGraphs/cpuflamegraphs.html). Kernel level profiling has minimal impact on a running process. Flame graphs are generated as SVG with the ability to zoom in and out of the call stacks. Yunong Xiao from Netflix has an excellent [talk](https://www.youtube.com/watch?v=O1YP8QP9gLA) and [post](http://yunong.io/2015/11/23/generating-node-js-flame-graphs/) for Linux perf to learn more about this technique. If you need to maintain high throughput in your production application, use this method.
-
-{{< figure src="/_media/flame-graph.png" title="Source: <https://cloudup.com/cE3eGxFHGif>" >}}
-
-## Using the V8 profiler
-
-Another option is tapping into the [V8 profiler](https://github.com/node-inspector/v8-profiler) directly. This method shares the same process with your application, so it could impact performance. For that reason, only run the profiler when you experience the problem in order to capture the relevant output. The perk of this method: you can use all of Chrome's profiling tools with the generated output (including flame graphs) to investigate.
-
-To instrument your application run:
+First, start the application with the `--inspect` flag:
 
 ```sh
-npm install v8-profiler --save
+node --inspect myapp.js
 ```
 
-Then, add this code to your application:
+This enables remote debugging by opening up a debugging port bound to `127.0.0.1:9229` on the remote server[^1].
 
-```javascript
-const profiler = require('v8-profiler')
-const fs = require('fs')
-var profilerRunning = false
+Then, on your local machine, tunnel to the debugger using SSH:
 
-function toggleProfiling () {
+```sh
+ssh -N -L 9229:localhost:9229 name-or-ip-of-remote-server
+```
+
+We use an [SSH tunnel][1] because we bound our debugger to `127.0.0.1` (localhost) on the remote server. This security measure limits the scope of who can access the debugging port to those with access to the remote server itself.
+
+Now, we are ready to start inspecting. Launch Google Chrome and head to `chrome://inspect/#devices` and click on `Open dedicated DevTools for Node`. You should see a screen like this:
+
+{{< figure src="/_media/profiling-1.png" title="Figure A" >}}
+
+Ensure you have `localhost:9229` listed; if not, click `Add connection` to add it. Then, head to the `Profiler` tab.
+
+{{< figure src="/_media/profiling-2.png" title="Figure B" >}}
+
+Here, select your application under `Select JavaScript VM instance` and click `Start` to begin profiling. While profiling, your application may take a slight performance hit - so keep that in mind. After some time, click `Stop` to finish profiling and look at the output.
+
+Now, analyze the output using the Chrome Developer Tools, inspect the code and even test changes without starting the server.
+
+# Profiling using inspector module.
+
+Using the `--inspect` flag requires you to restart your application to enable or run your applications with the flag already enabled, awaiting an issue. But there is another way you can approach the problem: use the built-in [`inspector`][3] package.
+
+Let's look at a module to include in your application that runs a profiler for the provided `seconds` when triggered. This technique won't expose a debugging port; instead it uses the [DevTools Protocol][2] directly:
+
+```js
+// runProfiler.js
+const inspector = require('inspector')
+const util = require('util')
+module.exports = runProfiler
+
+let session = new inspector.Session()
+session.connect()
+
+let post = util.promisify(session.post.bind(session))
+let delay = ms => new Promise(res => setTimeout(res, ms))
+let profilerRunning = false
+
+async function runProfiler(seconds) {
   if (profilerRunning) {
-    const profile = profiler.stopProfiling()
-    console.log('stopped profiling')
-    profile.export()
-      .pipe(fs.createWriteStream('./myapp-'+Date.now()+'.cpuprofile'))
-      .once('error',  profiler.deleteAllProfiles)
-      .once('finish', profiler.deleteAllProfiles)
+    throw new Error('Profiler already running, try again later')
+  }
+  profilerRunning = true
+  let profile
+
+  try {
+    await post('Profiler.enable')
+    await post('Profiler.start')
+    await delay(seconds * 1000)
+    profile = (await post('Profiler.stop')).profile
+  } catch (er) {
+    console.error('Profiler error:', er)
+  } finally {
+    await post('Profiler.disable')
     profilerRunning = false
+  }
+
+  return profile
+}
+```
+
+Since this is a programmatic API, you can trigger it however and whenever you'd like. Let's look at a couple examples. The first is sending the process a signal. Here we use the `SIGUSR2` signal to profile 30 seconds of data and write the profile to the current working directory of the application.
+
+```js
+const runProfiler = require('./runProfiler')
+const fs = require('fs')
+const util = require('util')
+
+let writeFile = util.promisify(fs.writeFile)
+
+process.on('SIGUSR2', async () => {
+  try {
+    let profile = await runProfiler(30)
+    let fn = `./profile_${Date.now()}.cpuprofile`
+    await writeFile(fn, JSON.stringify(profile))
+    console.error('Profile written to', fn)
+  } catch (er) {
+    console.error('Profiler error:', er)
+  }
+})
+```
+
+If you are running a web server (like Express), you can expose a private endpoint to take a profile as well. This will download a 30-second profile when accessing the endpoint.
+
+```js
+const runProfiler = require('./runProfiler')
+
+// Express route. Make sure to lock this down from public access!
+app.get('/_profile', async (req, res) => {
+  try {
+    let profile = await runProfiler(30)
+    res.attachment(`profile_${Date.now()}.cpuprofile`)
+    res.send(profile)
+  } catch (er) {
+    res.status(500).send(er.message)
+  }
+})
+```
+
+Once you have your `.cpuprofile` file, load that up inside the Chrome Developer Tools for Node by clicking the `Load` button on the `Profiler` tab (see **Figure B** above).
+
+## Inspecting using the inspector module
+
+The inspector package allows you to programmatically start up and shut down a debugging port as well. Here is a module that essentially toggles on and off `--inspect` flag when sent a `SIGUSR2` signal:
+
+```js
+const inspector = require('inspector')
+let inspectorRunning = false
+
+async function toggleInspector() {
+  if (inspectorRunning) {
+    inspector.close()
+    console.log('Inspector closed')
     return
   }
-  profiler.startProfiling()
-  profilerRunning = true
-  console.log('started profiling')
+  inspector.open()
+  inspectorRunning = true
+  console.log('Inspector running on 127.0.0.1:9229')
 }
 
-process.on('SIGUSR2', toggleProfiling)
+process.on('SIGUSR2', toggleInspector)
 ```
 
-The output is written to a file in the current working directory for the process (make sure it's writable!). Since this is a programmatic API, you can trigger it however you'd like (web endpoint, IPC, etc.). You also can trigger it whenever you like, if you have a hunch about when things get sluggish. Setting up automatic triggers can be helpful to avoid babysitting your application, but it requires forethought on when and how long to capture.
+[1]: https://en.wikipedia.org/wiki/Tunneling_protocol
+[2]: https://chromedevtools.github.io/devtools-protocol/v8/Profiler
+[3]: https://nodejs.org/dist/latest/docs/api/inspector.html
 
-Once you've collected your profile data, [load it up](https://docs.strongloop.com/display/SLC/CPU+profiling#CPUprofiling-ViewingCPUprofiledata) it in the Chrome Dev Tools and start [analyzing](https://developers.google.com/web/tools/chrome-devtools/profile/rendering-tools/js-execution?hl=en)!
+# Other options
 
-{{< figure src="/_media/chrome-flame-graph.png" >}}
+We looked at two build-in methods for profiling applications in Node: the `--inspect` flag and the `inspector` module. There are some other alternatives you may interested in:
 
-## Using a process manager
+- [Built-in V8 profiler](https://nodejs.org/en/docs/guides/simple-profiling/)
+- [Flame graphs with perf](https://nodejs.org/en/docs/guides/diagnostics-flamegraph/)
 
-Although utilizing the V8 profiler directly is powerful and customizable, it does invade your code base and adds another dependency to your project which may not be desirable. An alternative is to use a process manager that can wrap your application with tools when you need them. One option is the `slc` command-line tool from StrongLoop.
+Let's set a new scene: the alert comes in but now you have a plan to diagnose the unexpected CPU load. By using valuable profile information, you are already on your way to understanding the problem better to make a fix.
 
-First, run `npm install strongloop -g`. Then run:
-
-```sh
-slc start [/path/to/app]
-```
-
-This will start your application wrapped in a process manager that allows you to take CPU profiles on demand. To verify a proper start and obtain the application id, run:
-
-```sh
-slc ctl
-```
-
-You will get an output similar to this:
-
-```
-Service ID: 1
-Service Name: my-sluggish-app
-Environment variables:
-    Name      Value
-    NODE_ENV  production
-Instances:
-    Version  Agent version  Debugger version  Cluster size  Driver metadata
-     5.0.1       2.0.2            1.0.0             1             N/A
-Processes:
-        ID      PID   WID  Listening Ports  Tracking objects?  CPU profiling?  Tracing?  Debugging?
-    1.1.61022  61022   0
-    1.1.61023  61023   1     0.0.0.0:3000
-```
-
-Locate the process id for your application. In this example, it is `1.1.61023`. Now, we can start profiling whenever we want by running:
-
-```sh
-slc ctl cpu-start 1.1.61023
-```
-
-When we feel we have captured the sluggish behavior, we can stop the profiler by running:
-
-```sh
-slc ctl cpu-stop 1.1.61023
-```
-
-This will write a file to disk:
-
-```
-CPU profile written to `node.1.1.61023.cpuprofile`, load into Chrome Dev Tools
-```
-
-And that's it. You can load it into Chrome just like the V8 profiler.
-
-## Making the right choice
-
-In this article, I presented three options for capturing production CPU usage in Node. So which one should you use? Here are some thoughts to help narrow down that decision:
-
-1. I need to profile for long periods of time: use kernel tools.
-2. I want to use Chrome Developer Tools: use V8 profiler or a process manager.
-3. I want to trigger profiles for certain actions in my application: use V8 profiler.
-4. I can't have performance impacted in my application: use kernel tools.
-5. I want my applications ready for profiling without having to instrument each one: use a process manager.
-
-[^1]: Command line applications typically don't have these requirements.
+[^1]: If you need another address, you can use `--inspect=[host:port]`. Do not use `0.0.0.0` as a host though, as it could expose your debugger to the Internet.
